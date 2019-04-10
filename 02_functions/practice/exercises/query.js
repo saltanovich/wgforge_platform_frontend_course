@@ -81,6 +81,132 @@
  * 3. Реализовать функциональность создания INSERT и DELETE запросов. Написать для них тесты.
  */
 
-export default function query() {
-  // ¯\_(ツ)_/¯
+export default function query(initialTable) {
+  function addValue(value, condition) {
+    if (typeof value === 'string') {
+      value = `\'${value}\'`;
+    }
+    queryObj.conditions[queryObj.conditions.length - 1].value = value;
+    queryObj.conditions[queryObj.conditions.length - 1].condition = condition;
+  }
+  const queryObj = {
+    select: '*',
+    from: initialTable,
+    conditions: []
+  };
+  const queryMethods = {
+    select(...args) {
+      if (args.length > 0) {
+        queryObj.select = args;
+      }
+      return this;
+    },
+    from(table) {
+      if (!queryObj.from) {
+        queryObj.from = table;
+      }
+      return this;
+    },
+    where(field) {
+      const condition = {
+        field,
+        orType: false,
+        notType: false
+      };
+      queryObj.conditions.push(condition);
+      return whereMethods;
+    },
+    orWhere(field) {
+      this.where(field);
+      queryObj.conditions[queryObj.conditions.length - 1].orType = true;
+      return whereMethods;
+    },
+    toString() {
+      let queryStr;
+      queryStr = `SELECT ${queryObj.select}`;
+      queryStr += ` FROM ${queryObj.from}`;
+
+      if (queryObj.conditions.length > 0) {
+        queryObj.conditions.forEach((item, i) => {
+          if (i === 0) {
+            queryStr += ` WHERE`;
+          } else {
+            queryStr += ` ${item.orType ? 'OR' : 'AND'}`;
+          }
+
+          if (item.condition === 'in') {
+            queryStr += ` ${item.field}`;
+            if (item.notType) {
+              queryStr += ' NOT';
+            }
+            queryStr += ` IN ${item.value.join(', ')}`;
+          } else if (item.condition === 'between') {
+            queryStr += ` ${item.field}`;
+            if (item.notType) {
+              queryStr += ' NOT';
+            }
+            queryStr += ` BETWEEN ${item.value[0]} AND ${item.value[1]}`;
+          } else if (item.condition === 'isNull') {
+            if (item.notType) {
+              queryStr += ' IS NOT NULL';
+            } else {
+              queryStr += ' IS NULL';
+            }
+          } else {
+            if (item.notType) {
+              queryStr += ' NOT';
+            }
+            queryStr += ` ${item.field} ${item.condition} ${item.value}`;
+          }
+        });
+      }
+
+      return `${queryStr};`;
+    }
+  };
+  const whereMethods = {
+    equals(value) {
+      addValue(value, '=');
+      return queryMethods;
+    },
+    in(value) {
+      queryObj.conditions[queryObj.conditions.length - 1].value = value;
+      queryObj.conditions[queryObj.conditions.length - 1].condition = 'in';
+      return queryMethods;
+    },
+    gt(value) {
+      addValue(value, '>');
+      return queryMethods;
+    },
+    gte(value) {
+      addValue(value, '>=');
+      return queryMethods;
+    },
+    lt(value) {
+      addValue(value, '<');
+      return queryMethods;
+    },
+    lte(value) {
+      addValue(value, '<=');
+      return queryMethods;
+    },
+    between(from, to) {
+      queryObj.conditions[queryObj.conditions.length - 1].value = [];
+      queryObj.conditions[queryObj.conditions.length - 1].value[0] = from;
+      queryObj.conditions[queryObj.conditions.length - 1].value[1] = to;
+      queryObj.conditions[queryObj.conditions.length - 1].condition = 'between';
+      return queryMethods;
+    },
+    isNull() {
+      queryObj.conditions[queryObj.conditions.length - 1].condition = 'isNull';
+    },
+    not() {
+      if (queryObj.conditions[queryObj.conditions.length - 1].notType === true) {
+        throw new Error(".not() can't be called in a row");
+      }
+      queryObj.conditions[queryObj.conditions.length - 1].notType = true;
+      return this;
+    }
+  };
+  return queryMethods;
 }
