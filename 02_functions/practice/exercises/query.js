@@ -92,10 +92,11 @@ export default function query(initialTable) {
   const queryObj = {
     select: '*',
     from: initialTable,
-    conditions: []
+    conditions: [],
   };
   const queryMethods = {
     select(...args) {
+      queryObj.conditions = [];
       if (args.length > 0) {
         queryObj.select = args;
       }
@@ -139,7 +140,13 @@ export default function query(initialTable) {
             if (item.notType) {
               queryStr += ' NOT';
             }
-            queryStr += ` IN ${item.value.join(', ')}`;
+            const modifiedValues = item.value.map(value => {
+              if (typeof value === 'string') {
+                return value = `\'${value}\'`;
+              }
+              return value;
+            })
+            queryStr += ` IN (${modifiedValues.join(', ')})`;
           } else if (item.condition === 'between') {
             queryStr += ` ${item.field}`;
             if (item.notType) {
@@ -148,9 +155,9 @@ export default function query(initialTable) {
             queryStr += ` BETWEEN ${item.value[0]} AND ${item.value[1]}`;
           } else if (item.condition === 'isNull') {
             if (item.notType) {
-              queryStr += ' IS NOT NULL';
+              queryStr += ` ${item.field} IS NOT NULL`;
             } else {
-              queryStr += ' IS NULL';
+              queryStr += ` ${item.field} IS NULL`;
             }
           } else {
             if (item.notType) {
@@ -199,6 +206,7 @@ export default function query(initialTable) {
     },
     isNull() {
       queryObj.conditions[queryObj.conditions.length - 1].condition = 'isNull';
+      return queryMethods;
     },
     not() {
       if (queryObj.conditions[queryObj.conditions.length - 1].notType === true) {
