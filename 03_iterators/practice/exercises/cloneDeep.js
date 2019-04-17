@@ -3,7 +3,7 @@
  */
 export default function cloneDeep(obj) {
   const cloneObj = {};
-  for (let i of Object.keys(obj)) {
+  for (const i of Object.keys(obj)) {
     if (typeof obj[i] === 'object' && obj[i] !== null) {
       cloneObj[i] = cloneDeep(obj[i]);
     } else {
