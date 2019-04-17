@@ -35,6 +35,7 @@ export default function deepMerge(destinationObject, sourceObject) {
         if (typeof item === 'object' && typeof destinationObject[i][y] === 'object') {
           return deepMerge(destinationObject[i][y], item);
         }
+
         destinationObject[i][y] = item;
       });
     } else if (typeof sourceObject[i] === 'object' && typeof destinationObject[i] === 'object') {
@@ -43,6 +44,5 @@ export default function deepMerge(destinationObject, sourceObject) {
       destinationObject[i] = sourceObject[i];
     }
   }
-
   return destinationObject;
 }
