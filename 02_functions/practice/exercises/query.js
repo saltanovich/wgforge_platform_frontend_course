@@ -92,7 +92,7 @@ export default function query(initialTable) {
   const queryObj = {
     select: '*',
     from: initialTable,
-    conditions: [],
+    conditions: []
   };
   const queryMethods = {
     select(...args) {
@@ -130,40 +130,45 @@ export default function query(initialTable) {
       if (queryObj.conditions.length > 0) {
         queryObj.conditions.forEach((item, i) => {
           if (i === 0) {
-            queryStr += ` WHERE`;
+            queryStr += ' WHERE';
           } else {
             queryStr += ` ${item.orType ? 'OR' : 'AND'}`;
           }
 
-          if (item.condition === 'in') {
-            queryStr += ` ${item.field}`;
-            if (item.notType) {
-              queryStr += ' NOT';
-            }
-            const modifiedValues = item.value.map(value => {
-              if (typeof value === 'string') {
-                return value = `\'${value}\'`;
+          switch (item.condition) {
+            case 'in': {
+              queryStr += ` ${item.field}`;
+              if (item.notType) {
+                queryStr += ' NOT';
               }
-              return value;
-            })
-            queryStr += ` IN (${modifiedValues.join(', ')})`;
-          } else if (item.condition === 'between') {
-            queryStr += ` ${item.field}`;
-            if (item.notType) {
-              queryStr += ' NOT';
+              const modifiedValues = item.value.map(value => {
+                if (typeof value === 'string') {
+                  return (value = `\'${value}\'`);
+                }
+                return value;
+              });
+              queryStr += ` IN (${modifiedValues.join(', ')})`;
+              break;
             }
-            queryStr += ` BETWEEN ${item.value[0]} AND ${item.value[1]}`;
-          } else if (item.condition === 'isNull') {
-            if (item.notType) {
-              queryStr += ` ${item.field} IS NOT NULL`;
-            } else {
-              queryStr += ` ${item.field} IS NULL`;
-            }
-          } else {
-            if (item.notType) {
-              queryStr += ' NOT';
-            }
-            queryStr += ` ${item.field} ${item.condition} ${item.value}`;
+            case 'between':
+              queryStr += ` ${item.field}`;
+              if (item.notType) {
+                queryStr += ' NOT';
+              }
+              queryStr += ` BETWEEN ${item.value[0]} AND ${item.value[1]}`;
+              break;
+            case 'isNull':
+              if (item.notType) {
+                queryStr += ` ${item.field} IS NOT NULL`;
+              } else {
+                queryStr += ` ${item.field} IS NULL`;
+              }
+              break;
+            default:
+              if (item.notType) {
+                queryStr += ' NOT';
+              }
+              queryStr += ` ${item.field} ${item.condition} ${item.value}`;
           }
         });
       }
