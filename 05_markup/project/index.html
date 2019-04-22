@@ -120,6 +120,9 @@
           on over a dozen intricately-designed maps. Do your best to collaborate, and your allies
           will work with you to unleash an unstoppable assault against your enemies!
         </p>
+        <div class="extra-tank">
+
+        </div>
       </article>
       <article class="article">
         <h3 class="title">Multiple
@@ -219,6 +222,13 @@
       </article>
     </section>
   </main>
+  <div class="tank-wrap">
+    <div class="tank">
+      <div class="turret">
+
+      </div>
+    </div>
+  </div>
   <footer class="footer">
     <ul>
       <li>
@@ -238,7 +248,7 @@
   <script>
     $(function () {
       var header = $('.section h2'),
-        section = $('.section'),
+        section = $('.section-game'),
         body = $('body'),
         mobileLogo = $('.mobile-logo'),
         link = $('li a')
@@ -255,8 +265,8 @@
       });
       link.on('click', function (e) {
         e.preventDefault();
-        section.removeClass('section-open');
-        body.removeClass('opened-section');
+        section.addClass('section-open');
+        body.addClass('opened-section');
       })
     });
   </script>
