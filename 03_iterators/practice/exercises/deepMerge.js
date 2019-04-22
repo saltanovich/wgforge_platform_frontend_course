@@ -27,5 +27,22 @@
  * //    }
  */
 export default function deepMerge(destinationObject, sourceObject) {
-  // ¯\_(ツ)_/¯
+  for (const i of Object.keys(sourceObject)) {
+    if (sourceObject[i] === undefined && destinationObject[i] !== undefined) continue;
+
+    if (Array.isArray(sourceObject[i]) && Array.isArray(destinationObject[i])) {
+      sourceObject[i].forEach((item, y) => {
+        if (typeof item === 'object' && typeof destinationObject[i][y] === 'object') {
+          return deepMerge(destinationObject[i][y], item);
+        }
+
+        destinationObject[i][y] = item;
+      });
+    } else if (typeof sourceObject[i] === 'object' && typeof destinationObject[i] === 'object') {
+      deepMerge(destinationObject[i], sourceObject[i]);
+    } else {
+      destinationObject[i] = sourceObject[i];
+    }
+  }
+  return destinationObject;
 }
