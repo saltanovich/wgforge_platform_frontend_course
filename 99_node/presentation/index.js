@@ -32,7 +32,8 @@ const images = {
   v8: require('../assets/v8.png'),
   eventLoop: require('../assets/event-loop.png'),
   dahl: require('../assets/dahl.jpg'),
-  node_architecture: require('../assets/na.png')
+  nodeArchitecture: require('../assets/na.png'),
+  nodeEventLoop: require('../assets/node_event_loop.png')
 };
 
 // Require CSS
@@ -141,6 +142,17 @@ export default class Presentation extends React.Component {
         </Slide>
 
         <Slide>
+          <Text>
+            <List textSize="25">
+              <ListItem>Возможность организовать наш код в виде многоразовых фрагментов</ListItem>
+              <ListItem>Возможность работы с файлами</ListItem>
+              <ListItem>Возможность работы с базами данных</ListItem>
+              <ListItem>Возможность принимать запросы и отправлять ответы</ListItem>
+            </List>
+          </Text>
+        </Slide>
+
+        <Slide>
           <Layout>
             <Fill>
               <Image src={images.dahl} />
@@ -170,28 +182,32 @@ export default class Presentation extends React.Component {
 
         <Slide>
           <Fill>
-            <Image src={images.node_architecture} />
+            <Image src={images.nodeArchitecture} />
           </Fill>
         </Slide>
 
         <Slide>
-          <Text>
-            <List textSize="25">
-              <ListItem>Возможность организовать наш код в виде многоразовых фрагментов</ListItem>
-              <ListItem>Возможность работы с файлами</ListItem>
-              <ListItem>Возможность работы с базами данных</ListItem>
-              <ListItem>Возможность принимать запросы и отправлять ответы</ListItem>
-            </List>
-          </Text>
+          <Layout>
+            <Fill>
+              <Image src={images.nodeEventLoop} />
+            </Fill>
+          </Layout>
+
+          <Layout>
+            <Fill>
+              <Text textAlign="center">Событийно-ориентированный неблокирующий механизм Node</Text>
+            </Fill>
+          </Layout>
         </Slide>
 
         <Slide>
           <Fill>
-            <Text textAlign="left" textColor="green">
-              Отлично подходит для приложений с большим количеством операций ввода-вывода
+            <Text textAlign="left" textColor="#1dd678">
+              ✔ Отлично подходит для приложений с большим количеством операций ввода-вывода
             </Text>
-            <Text textAlign="left" textColor="red">
-              Не следует использовать для приложений с высокой загрузкой процессора
+            <br />
+            <Text textAlign="left" textColor="#e9162a">
+              🚫 Не следует использовать для приложений с высокой загрузкой процессора
             </Text>
           </Fill>
         </Slide>
